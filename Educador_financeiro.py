@@ -24,7 +24,6 @@ while True:
 			'limite_gasto': 0, 
 			'divida_extra': 0
 	}
-	exibir_mensagem('1º CADASTRO')
 	dados['nome'] =   str(input('Nome: '))
 	dados['idade']=   int(input('Idade: '))
 	dados['salário']= float(input('Salário: '))
@@ -76,7 +75,7 @@ while True:
 	perg = str(input('Deseja encerrar o programa? [S/N]: ')).upper()[0]
 	if perg in 'S':
 		break
-
+	print('----'*6)
 
 
 
