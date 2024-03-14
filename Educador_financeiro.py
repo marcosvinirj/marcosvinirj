@@ -5,7 +5,16 @@
 #30% = poupar(investir) , 50% = Contas fixas.
 
 
-from time import sleep
+
+def investimento(salario , renda_extra):
+	total = salario + renda_extra
+	lazer = total * 0.10
+	viagem = total * 0.10
+	poupar = total * 0.30
+	contas_fixas = total * 0.50
+	return lazer , viagem , poupar , contas_fixas
+
+from time import sleep 
 def exibir_mensagem(menssagem):
 	sleep(0.5)
 	print('-'*40)
@@ -75,7 +84,16 @@ while True:
 	perg = str(input('Deseja encerrar o programa? [S/N]: ')).upper()[0]
 	if perg in 'S':
 		break
-	print('----'*6)
+print('----'*8)
+total = investimento(dados['salário'] , dados['renda_extra'])
+print(total)
+
+
+
+
+
+
+
 
 
 
