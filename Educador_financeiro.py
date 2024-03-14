@@ -20,7 +20,7 @@ def exibir_mensagem(menssagem):
 	print('-'*40)
 	print(f'{menssagem:^40}')
 	print('-'*40)
-	
+	  
 	
 def calculo_total(a , b):  
 	return a + b
