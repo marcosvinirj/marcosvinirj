@@ -1,33 +1,50 @@
-import logging
-from telegram import Update
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
+import telebot
 from Educador_financeiro import main
+# import decouple
+# from Educador_financeiro import main as calculo
 
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
+bot = telebot.TeleBot(
+    "6972850754:AAEdNoDj0wEdJdKZb62tgT2UbOFfQ0n72_A", parse_mode=None)
 
-async def start(update, context):
-    user_name = update.message.from_user.first_name
-    #pegar salario
-    #pegar renda extra
-    #etc.
 
-    dados = main(user_name, "22", "2000", "1000", "2000", "100")
-    await update.message.reply_text(f'Olá, {user_name}! Bem-vindo ao seu bot do Telegram.')
-    await update.message.reply_text(str(dados))
+def verificar_mensagem(mensagem):
+    return True
 
-# Função para lidar com mensagens de texto
-def echo(update, context):
-    user_name = update.message.from_user.first_name
-    message_text = update.message.text
-    update.message.reply_text(f'{user_name}, você disse: {message_text}')
+@bot.message_handler(func=lambda message: True)
+def welcome(message):
+    name = message.from_user.first_name
+    bot.reply_to(message, f'Bem vindo {name} ao bot de educador financeiro!\nQual a sua idade?')
 
-if __name__ == '__main__':
-    application = ApplicationBuilder().token('6972850754:AAEdNoDj0wEdJdKZb62tgT2UbOFfQ0n72_A').build()
-    
-    start_handler = CommandHandler('start', start)
-    application.add_handler(start_handler)
-    
-    application.run_polling()
+@bot.message_handler(func=welcome)
+def get_age(message):
+    idade = message.text
+    bot.reply_to(message, 'Qual o seu salário?')
+    bot.register_next_step_handler(message, get_salary, idade)
+
+def get_salary(message, idade):
+    salario = message.text
+    bot.reply_to(message, 'Qual a sua renda extra?')
+    bot.register_next_step_handler(message, get_extra_income, idade, salario)
+
+def get_extra_income(message, idade, salario):
+    renda_extra = message.text
+    bot.reply_to(message, 'Qual o seu limite de gastos?')
+    bot.register_next_step_handler(message, get_spending_limit, idade, salario, renda_extra)
+
+def get_spending_limit(message, idade, salario, renda_extra):
+    limite_gasto = message.text
+    bot.reply_to(message, 'Qual a sua dívida extra?')
+    bot.register_next_step_handler(message, calculate, idade, salario, renda_extra, limite_gasto)
+
+def calculate(message, idade, salario, renda_extra, limite_gasto):
+    divida_extra = message.text
+    calculo = main(idade, salario, renda_extra, limite_gasto, divida_extra)
+
+    bot.send_message(message.chat.id, f'Ok, seu nome é {calculo["nome"]}.')
+    bot.send_message(message.chat.id, f'Ok, sua idade é {idade}.')
+    bot.send_message(message.chat.id, f'Ok, seu salário é {salario}.')
+    bot.send_message(message.chat.id, f'Ok, sua renda extra é {renda_extra}.')
+    bot.send_message(message.chat.id, f'Ok, seu limite de gastos é {limite_gasto}.')
+    bot.send_message(message.chat.id, f'Ok, sua dívida extra é {divida_extra}.')
+
+bot.polling()
